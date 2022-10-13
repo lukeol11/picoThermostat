@@ -1,5 +1,6 @@
 import web_server
 import time
+import machine
 
 time.sleep(10)
 try:
