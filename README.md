@@ -9,11 +9,12 @@ Control you home heating using a Raspberry Pi W.
 - [x] Toggle Relay
 - [x] Control heating using http web server
   - [x] ON/OFF Functionality
+  - [x] Toggle Thermostat functionality
   - [x] Temperature Display
-  - [ ] Temperature setting
+  - [ ] Change thermostat temperature
   - [ ] Time setting
   - [ ] Weather display
-- [ ] Control heating using onboard temperature sensor
+- [x] Control heating using onboard temperature sensor
 - [ ] Control heating using time
 - [ ] Control heating using weather api
 - [ ] Control heating using physical buttons

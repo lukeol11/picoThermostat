@@ -36,19 +36,23 @@ def open_socket(ip):
     return connection
 
 
-def webpage(temperature, state):
+def webpage(temperature, state, mode):
     # Template HTML
     page = open("index.html", "r")
     html = page.read()
     page.close()
     html = str(html).replace("{temperature}", str(temperature))
-    html = html.replace("{state}", str(state))
+    if state == 0:
+        html = str(html).replace("{state}", "OFF")
+    else:
+        html = str(html).replace("{state}", "ON")
+    html = html.replace("{mode}", str(mode))
     return html
 
 
 def serve(connection):
     # Start a web server
-    state = 'OFF'
+    mode = 'Thermostat'
     pico_led.off()
     relay.off()
     temperature = 0
@@ -60,15 +64,30 @@ def serve(connection):
             request = request.split()[1]
         except IndexError:
             pass
+
+        # Web server
+
         if request == '/heatingon?':
             pico_led.on()
             relay.on()
-            state = 'ON'
+            mode = 'Manual On'
         elif request == '/heatingoff?':
             pico_led.off()
             relay.off()
-            state = 'OFF'
+            mode = 'Manual Off'
+        elif request == '/thermostat?':
+            mode = 'Thermostat'
+
         temperature = findTemperature()
-        html = webpage(temperature, state)
+
+        # Temperature Control
+        if mode == 'Thermostat':
+            if temperature < 25:
+                pico_led.on()
+                relay.on()
+            elif temperature > 27:
+                pico_led.off()
+                relay.off()
+        html = webpage(temperature, relay.value(), mode)
         client.send(html)
         client.close()
