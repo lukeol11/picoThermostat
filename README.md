@@ -11,6 +11,7 @@ Control you home heating using a Raspberry Pi W.
   - [x] ON/OFF Functionality
   - [x] Toggle Thermostat functionality
   - [x] Temperature Display
+  - [ ] Static IP Address
   - [ ] Change thermostat temperature
   - [ ] Time setting
   - [ ] Weather display
