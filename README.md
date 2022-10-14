@@ -16,6 +16,7 @@ Control you home heating using a Raspberry Pi W.
   - [ ] Time setting
   - [ ] Weather display
 - [x] Control heating using onboard temperature sensor
+  - [ ] Move from [web_server.py](web_server.py) to [thermostat.py](thermostat.py)
 - [ ] Control heating using time
 - [ ] Control heating using weather api
 - [ ] Control heating using physical buttons
