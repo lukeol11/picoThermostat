@@ -55,32 +55,9 @@ def serve(connection):
     mode = 'Thermostat'
     pico_led.off()
     relay.off()
-    temperature = 0
     while True:
-        client = connection.accept()[0]
-        request = client.recv(1024)
-        request = str(request)
-        try:
-            request = request.split()[1]
-        except IndexError:
-            pass
-
-        # Web server
-
-        if request == '/heatingon?':
-            pico_led.on()
-            relay.on()
-            mode = 'Manual On'
-        elif request == '/heatingoff?':
-            pico_led.off()
-            relay.off()
-            mode = 'Manual Off'
-        elif request == '/thermostat?':
-            mode = 'Thermostat'
-
-        temperature = findTemperature()
-
         # Temperature Control
+        temperature = findTemperature()
         if mode == 'Thermostat':
             if temperature < 25:
                 pico_led.on()
@@ -88,6 +65,30 @@ def serve(connection):
             elif temperature > 27:
                 pico_led.off()
                 relay.off()
-        html = webpage(temperature, relay.value(), mode)
-        client.send(html)
-        client.close()
+        connection.settimeout(60)
+        try:
+            client = connection.accept()[0]
+            request = client.recv(1024)
+            request = str(request)
+            try:
+                request = request.split()[1]
+            except IndexError:
+                pass
+
+            # Web server
+            if request == '/heatingon?':
+                pico_led.on()
+                relay.on()
+                mode = 'Manual On'
+            elif request == '/heatingoff?':
+                pico_led.off()
+                relay.off()
+                mode = 'Manual Off'
+            elif request == '/thermostat?':
+                mode = 'Thermostat'
+
+            html = webpage(temperature, relay.value(), mode)
+            client.send(html)
+            client.close()
+        except OSError:
+            pass
