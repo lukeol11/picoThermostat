@@ -15,7 +15,6 @@ def findTemperature():
 
 
 def connect():
-    # Connect to WLAN
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(credentials.ssid, credentials.password)
@@ -28,7 +27,6 @@ def connect():
 
 
 def open_socket(ip):
-    # Open a socket
     address = (ip, 80)
     connection = socket.socket()
     connection.bind(address)
@@ -37,7 +35,6 @@ def open_socket(ip):
 
 
 def webpage(temperature, state, mode):
-    # Template HTML
     page = open("index.html", "r")
     html = page.read()
     page.close()
@@ -50,13 +47,26 @@ def webpage(temperature, state, mode):
     return html
 
 
+def getTime():
+    ai = socket.getaddrinfo(
+        "worldtimeapi.org", 80)
+    addr = ai[0][-1]
+    connection = socket.socket()
+    connection.connect(addr)
+    connection.send(
+        b"GET /api/timezone/Europe/London.txt HTTP/1.0\r\n\r\n")
+    htmlPage = connection.recv(1024)
+    htmlPage = str(htmlPage)
+    locationOfTime = htmlPage.find("datetime") + 21
+    return htmlPage[locationOfTime:locationOfTime + 5]
+
+
 def serve(connection):
-    # Start a web server
     mode = 'Thermostat'
     pico_led.off()
     relay.off()
+    print(getTime())  # temp
     while True:
-        # Temperature Control
         temperature = findTemperature()
         if mode == 'Thermostat':
             if temperature < 25:
@@ -75,7 +85,6 @@ def serve(connection):
             except IndexError:
                 pass
 
-            # Web server
             if request == '/heatingon?':
                 pico_led.on()
                 relay.on()
